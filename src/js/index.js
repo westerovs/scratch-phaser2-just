@@ -1,12 +1,13 @@
+import CoverWrap from './CoverWrap.js';
+
 class Game {
   constructor() {
     this.game  = null
-    this.innerCover = null
-    this.coverWrap  = null
-    this.coin  = null
+    this.init()
   
-    this.MIN_ALPHA_RATIO = 0.5
-    this.finish = false
+    this.coverWrap1 = null
+    this.coverWrap2 = null
+    this.coverWrap3 = null
   }
 
   init() {
@@ -25,79 +26,42 @@ class Game {
   preload() {
     this.game.stage.backgroundColor = '#FFF'
     this.game.load.image('redBlock', '/src/img/block1.png')
-    this.game.load.image('greenBlock', '/src/img/block2.png')
+    this.game.load.image('mushrooms', '/src/img/mushrooms.jpg')
+    this.game.load.image('carrot', '/src/img/carrot.jpg')
+    this.game.load.image('tomato', '/src/img/tomato.jpg')
   }
 
   create = () => {
     this.game.stage.backgroundColor = '#000000'
-    this.#createInnerCover()
-    this.#createCoverWrap()
+    this.coverWrap1 = new CoverWrap({
+      game: this.game,
+      spriteKey: 'mushrooms',
+      x: 100,
+      y: 100
+    })
+    
+    this.coverWrap2 = new CoverWrap({
+      game: this.game,
+      spriteKey: 'carrot',
+      x: 400,
+      y: 100
+    })
+    
+    this.coverWrap3 = new CoverWrap({
+      game: this.game,
+      spriteKey: 'tomato',
+      x: 250,
+      y: 350
+    })
+    
   }
   
   update = () => {
-    this.#onTouchStart()
-    
-    this.#checkWin()
+    this.coverWrap1.update()
+    this.coverWrap2.update()
+    this.coverWrap3.update()
   }
   
-  #onTouchStart = () => {
-    if (this.game.input.activePointer.isDown) {
-      let x = Math.floor(this.game.input.x - this.coverWrap.x)
-      let y = Math.floor(this.game.input.y - this.coverWrap.y)
-      const rgba = this.coverWrap.getPixel(x, y)
-    
-      if (rgba.a > 0) {
-        this.coverWrap.blendDestinationOut()
-        this.coverWrap.circle(x, y, 16, 'rgba(0, 0, 0, 255')
-        this.coverWrap.blendReset()
-        this.coverWrap.dirty = true
-      }
-    }
-  }
-  
-  #createInnerCover = () => {
-    this.innerCover = this.game.add.image(200, 200, 'greenBlock')
-  }
-
-  #createCoverWrap = () => {
-    this.coverWrap = this.game.add.bitmapData(200, 200)
-    this.coverWrap.x = 200
-    this.coverWrap.y = 200
-    
-    this.coverWrap.copy('redBlock')
-    
-    this.coverWrap.update()
-    this.coverWrap.addToWorld(this.coverWrap.x, this.coverWrap.y)
-  }
-  
-  #clearCoverWrap = () => {
-    this.coverWrap.context.clearRect(0, 0, 200, 200);
-  }
-  
-  getAlphaRatio = () => {
-    const ctx = this.coverWrap.ctx
-    let alphaPixels = 0
-    
-    const data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data
-
-    // чем выше число, тем быстрее происходит полная очистка
-    const coefficientBrush = 4
-    for (let i = 0; i < data.length; i += coefficientBrush) {
-      if (data[i] > 0) alphaPixels++
-    }
-    
-    return alphaPixels / (ctx.canvas.width * ctx.canvas.height)
-  }
-
-  #checkWin = () => {
-    const alphaRatio = this.getAlphaRatio()
-
-    if (!this.finish && alphaRatio < this.MIN_ALPHA_RATIO) {
-      this.finish = true
-      this.#clearCoverWrap()
-      console.warn('FINISH HIM')
-    }
-  }
 }
-new Game().init()
+new Game()
 
