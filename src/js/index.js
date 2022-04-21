@@ -1,11 +1,11 @@
 class Game {
   constructor() {
     this.game  = null
-    this.money = null
+    this.innerCover = null
     this.coverWrap  = null
     this.coin  = null
   
-    this.MIN_ALPHA_RATIO = 0.6
+    this.MIN_ALPHA_RATIO = 0.5
     this.finish = false
   }
 
@@ -30,9 +30,8 @@ class Game {
 
   create = () => {
     this.game.stage.backgroundColor = '#000000'
-    this.#createMoney()
+    this.#createInnerCover()
     this.#createCoverWrap()
-    // this.#createBrush()
   }
   
   update = () => {
@@ -56,11 +55,8 @@ class Game {
     }
   }
   
-  #createMoney = () => {
-    this.money = this.game.add.image(200, 200, 'greenBlock')
-    // this.money.create(200, 200, 'money')
-    // this.money.setAll('anchor.x', 0.5)
-    // this.money.setAll('anchor.y', 0.5)
+  #createInnerCover = () => {
+    this.innerCover = this.game.add.image(200, 200, 'greenBlock')
   }
 
   #createCoverWrap = () => {
@@ -68,48 +64,38 @@ class Game {
     this.coverWrap.x = 200
     this.coverWrap.y = 200
     
-    this.coverWrap.context.fillStyle = 'brown'
-    this.coverWrap.context.fillRect(0, 0, 500, 200)
-    this.coverWrap.ctx.fillStyle = "blue"
-    this.coverWrap.ctx.font = '35px san-serif'
-    
-    const textString = 'Потри меня!'
-    const textWidth = this.coverWrap.ctx.measureText(textString).width
-    this.coverWrap.ctx.fillText(textString, (this.coverWrap.width / 2) - (textWidth / 2), 120)
-  
-    // this.coverWrap.copy('redBlock');
+    this.coverWrap.copy('redBlock')
     
     this.coverWrap.update()
     this.coverWrap.addToWorld(this.coverWrap.x, this.coverWrap.y)
   }
   
-  #clearAllCoverWrap = () => {
+  #clearCoverWrap = () => {
     this.coverWrap.context.clearRect(0, 0, 200, 200);
   }
   
-  #createBrush = () => {
-    this.coin = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'redBlock')
-    this.coin.anchor.setTo(0.1, 0.5)
-    this.game.physics.enable(this.coin, Phaser.Physics.ARCADE)
-  }
-
-  alphaRatio = (ctx) => {
+  getAlphaRatio = () => {
+    const ctx = this.coverWrap.ctx
     let alphaPixels = 0
     
-    let data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data
-    for (let i = 3; i < data.length; i += 4) {
+    const data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data
+
+    // чем выше число, тем быстрее происходит полная очистка
+    const coefficientBrush = 4
+    for (let i = 0; i < data.length; i += coefficientBrush) {
       if (data[i] > 0) alphaPixels++
     }
-
+    
     return alphaPixels / (ctx.canvas.width * ctx.canvas.height)
   }
 
   #checkWin = () => {
-    if (!this.finish && this.alphaRatio(this.coverWrap.ctx) < this.MIN_ALPHA_RATIO) {
+    const alphaRatio = this.getAlphaRatio()
+
+    if (!this.finish && alphaRatio < this.MIN_ALPHA_RATIO) {
       this.finish = true
-      this.#clearAllCoverWrap()
-      console.log('')
-      console.warn("You Win! :D")
+      this.#clearCoverWrap()
+      console.warn('FINISH HIM')
     }
   }
 }
