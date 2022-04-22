@@ -2,17 +2,20 @@ export default class CoverWrap {
   constructor({
       game,
       spriteKey,
+      cover,
       x,
-      y
+      y,
+      MIN_ALPHA_RATIO = 0.5
     }) {
     this.game = game
     this.spriteKey = spriteKey
+    this.cover = cover
     this.x = x
     this.y = y
     this.innerCover = null
     this.coverWrap  = null
   
-    this.MIN_ALPHA_RATIO = 0.5
+    this.MIN_ALPHA_RATIO = MIN_ALPHA_RATIO
     this.finish = false
     
     this.init()
@@ -52,7 +55,7 @@ export default class CoverWrap {
     this.coverWrap.x = this.x
     this.coverWrap.y = this.y
     
-    this.coverWrap.copy('redBlock')
+    this.coverWrap.copy(this.cover)
     
     this.coverWrap.update()
     this.coverWrap.addToWorld(this.coverWrap.x, this.coverWrap.y)
