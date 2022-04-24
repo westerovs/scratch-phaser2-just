@@ -1,14 +1,14 @@
 export default class CoverWrap {
   constructor({
       game,
-      spriteKey,
+      innerSpriteKey,
       cover,
       x,
       y,
       MIN_ALPHA_RATIO = 0.5
     }) {
     this.game = game
-    this.spriteKey = spriteKey
+    this.innerSpriteKey = innerSpriteKey
     this.cover = cover
     this.x = x
     this.y = y
@@ -47,7 +47,8 @@ export default class CoverWrap {
   }
   
   #createInnerCover = () => {
-    this.innerCover = this.game.add.image(this.x, this.y, this.spriteKey)
+    if (!this.innerSpriteKey) return
+    this.innerCover = this.game.add.image(this.x, this.y, this.innerSpriteKey)
   }
   
   #createCoverWrap = () => {
@@ -55,7 +56,8 @@ export default class CoverWrap {
     this.coverWrap.x = this.x
     this.coverWrap.y = this.y
     
-    this.coverWrap.copy(this.cover)
+    // this.coverWrap.copy(this.cover)
+    this.coverWrap.draw(this.cover)
     
     this.coverWrap.update()
     this.coverWrap.addToWorld(this.coverWrap.x, this.coverWrap.y)

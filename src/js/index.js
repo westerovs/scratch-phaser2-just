@@ -39,7 +39,7 @@ class Game {
     this.game.stage.backgroundColor = '#000000'
     this.coverWrap1 = new CoverWrap({
       game: this.game,
-      spriteKey: 'mushrooms',
+      innerSpriteKey: 'mushrooms',
       cover: 'cover',
       x: 100,
       y: 100
@@ -55,7 +55,7 @@ class Game {
     
     this.coverWrap3 = new CoverWrap({
       game: this.game,
-      spriteKey: 'tomato',
+      innerSpriteKey: 'tomato',
       cover: 'cover',
       x: 250,
       y: 350
@@ -63,7 +63,7 @@ class Game {
     
     this.coverWrap4 = new CoverWrap({
       game: this.game,
-      spriteKey: 'peas',
+      innerSpriteKey: 'peas',
       cover: 'peasCover',
       x: 550,
       y: 350,
